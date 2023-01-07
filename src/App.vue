@@ -189,4 +189,11 @@ footer {
 .generate-button:hover {
 	background-color: var(--color-button-hover);
 }
+
+@media (max-width: 600px) {
+	h1 {
+		font-size: 2.5rem;
+		margin-bottom: -20px;
+	}
+}
 </style>
