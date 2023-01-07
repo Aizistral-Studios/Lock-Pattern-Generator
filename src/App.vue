@@ -212,13 +212,13 @@ footer {
 	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;
-	color: var(--color-button-text);
 	cursor: pointer;
 	transition: background-color 0.3s;
 	width: 100%;
 }
 
 .generate-button {
+	color: var(--color-button-text);
 	background-color: var(--color-button);
 	margin-top: 20px;
 }
@@ -230,11 +230,14 @@ footer {
 .download-button {
 	margin-top: 10px;
 	margin-bottom: 0.25em;
-	background-color: var(--color-secondary-button);
+	color: var(--color-text);
+	background-color: var(--color-background);
+	border: 3px solid var(--color-secondary-button);
+	transition: border 0.3s;
 }
 
 .download-button:hover {
-	background-color: var(--color-secondary-button-hover);
+	border: 3px solid var(--color-secondary-button-hover);
 }
 
 @media (max-width: 600px) {
