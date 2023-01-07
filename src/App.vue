@@ -2,6 +2,7 @@
 import LockPad from "./components/LockPad.vue";
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
+import 'animate.css'
 import { reactive, ref } from "vue";
 import * as PatternGenerator from "./patternGenerator"
 
@@ -37,10 +38,10 @@ function onChange(value: number, index: number) {
 <template>
 	<main>
 		<div class="content-wrapper">
-			<header>
+			<header class="animate__animated animate__backInDown">
 				<h1>Lock Pattern Generator</h1>
 			</header>
-			<div class="main-content">
+			<div class="main-content animate__animated animate__backInLeft">
 				<LockPad class="lock-pad" :pattern="state.sequence" />
 				<div class="controls">
 					<div class="guide">
@@ -64,7 +65,7 @@ function onChange(value: number, index: number) {
 					<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
 				</div>
 			</div>
-			<footer>
+			<footer class="animate__animated animate__backInUp">
 				<p>&copy; 2023 Aizistral</p>
 				<p><a target="_blank" href="https://github.com/Aizistral-Studios/Lock-Pattern-Generator/tree/master/LICENSE">License</a> | <a target="_blank" href="https://github.com/Aizistral-Studios/Lock-Pattern-Generator/issues">Issues</a> | <a target="_blank" href="https://github.com/Aizistral-Studios/Lock-Pattern-Generator">Source</a></p>
 			</footer>
@@ -75,7 +76,7 @@ function onChange(value: number, index: number) {
 <style scoped>
 main {
 	min-height: inherit;
-	overflow: auto;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
