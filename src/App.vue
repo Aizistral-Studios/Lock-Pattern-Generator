@@ -7,39 +7,40 @@ import { reactive, ref, onMounted } from "vue";
 import * as PatternGenerator from "./patternGenerator"
 import * as Html2Canvas from "html2canvas";
 import Download from "./components/icons/Download.vue";
+import SortNumericUp from "./components/icons/SortNumericUp.vue";
 
 const slider = ref<typeof VueSlider>();
 const state = reactive({
 	usePoints: getCachedUsePoints(),
 	sequence: PatternGenerator.generate(getCachedUsePoints()),
-	randomID: generateRandomID()
+	randomID: generateRandomID(),
+	showNumbers: getCachedShowNumbers()
 });
+
+function getCachedUsePoints(): number {
+	return localStorage.getItem("usePoints") ? parseInt(localStorage.getItem("usePoints") as string) : 5;
+}
+
+function getCachedShowNumbers(): boolean {
+	return localStorage.getItem("showNumbers") ? localStorage.getItem("showNumbers") === "true" : false;
+}
 
 function generateRandomID() {
 	return Math.random().toString(36).substring(2, 15);
 }
 
-function getCachedUsePoints(): number {
-	const usePoints = localStorage.getItem("usePoints");
-
-	if (usePoints)
-		return parseInt(usePoints);
-
-	return 5;
-}
-
-function cacheUsePoints(usePoints: number) {
-	localStorage.setItem("usePoints", usePoints.toString());
-}
-
 function updateSequence(usePoints: number) {
-	cacheUsePoints(usePoints);
+	localStorage.setItem("usePoints", usePoints.toString());
 	state.randomID = generateRandomID();
 	state.sequence = PatternGenerator.generate(usePoints);
 }
 
 function onChange(value: number, index: number) {
 	updateSequence(value);
+}
+
+function onChangeShowNumbers(value: boolean) {
+	localStorage.setItem("showNumbers", value.toString());
 }
 
 function onDownload() {
@@ -66,12 +67,20 @@ function onDownload() {
 			</header>
 			<div class="main-content animate__animated animate__backInLeft">
 				<div class="lock-pad-wrapper">
-					<LockPad id="capture" class="lock-pad" :pattern="state.sequence" />
+					<LockPad id="capture" class="lock-pad" :pattern="state.sequence" :showNumbers="state.showNumbers" />
 				</div>
 				<div class="controls-wrapper">
 					<div class="controls">
 						<div class="guide">
-							<p class="guide-header">Color Guide</p>
+							<div class="guide-header-container">
+								<p class="guide-header">Color Guide</p>
+								<div class="numbers-control">
+									<label for="numbers" class="numbers-label">
+										<SortNumericUp class="numbers-icon" />
+									</label>
+									<input type="checkbox" class="numbers-checkbox" id="numbers" name="numbers" v-model="state.showNumbers" @change="onChangeShowNumbers(state.showNumbers)" />
+								</div>
+							</div>
 							<p class="guide-subtext">Pattern points go in this sequence. Some lines may not be visible due to overlapping.</p>
 							<div class="guide-colors">
 								<div class="guide-color" v-for="i in 9" :key="i">
@@ -167,6 +176,43 @@ footer {
 .controls {
 	width: 300px;
 	font-size: 1.2rem;
+}
+
+.guide-header-container {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.numbers-control, .numbers-label {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
+}
+
+.numbers-icon {
+	width: 20px;
+	height: 20px;
+}
+
+.numbers-checkbox {
+	appearance: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 18px;
+	height: 18px;
+	/* background-color: black; */
+	border: 1px solid var(--color-text);
+	border-radius: 3px;
+}
+
+.numbers-checkbox:checked:after {
+	content: '\2714';
+	font-size: 16px;
+	color: var(--color-text);
 }
 
 .guide-subtext {

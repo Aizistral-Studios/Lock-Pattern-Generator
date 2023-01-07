@@ -3,7 +3,7 @@ import { defineProps, onUpdated, ref, onMounted } from "vue";
 
 interface Point { id: number; x: number; y: number; }
 
-const props = defineProps<{ pattern: number[]; }>();
+const props = defineProps<{ pattern: number[]; showNumbers: boolean }>();
 const lockpad = ref<HTMLElement>();
 const pointRefs = ref<HTMLElement[]>([]);
 const points: Point[] = [
@@ -72,6 +72,7 @@ onUpdated(handleUpdate);
 		<div class="point-container" v-for="point in points" :key="point.id">
 			<div class="point" ref="pointRefs" :id="`point-${point.id.toString()}`"
 				:style="{ '--point-background': computePointBackground(point) }">
+				<p class="pattern-index" v-if="showNumbers && pattern.includes(point.id)">{{ pattern.indexOf(point.id) + 1 }}</p>
 				<div class=" arrow" v-if="pattern.includes(point.id) && pattern.indexOf(point.id) < pattern.length - 1"
 					:style="{
 						'--arrow-color-0': `var(--color-${pattern.indexOf(point.id)})`,
@@ -109,9 +110,19 @@ onUpdated(handleUpdate);
 	border-radius: 50%;
 	overflow: visible;
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	--point-background: var(--color-point-empty);
 	background-color: var(--point-background);
+}
+
+.pattern-index {
+	font-size: 1rem;
+	font-weight: bold;
+	color: #fff;
+	z-index: 20;
 }
 
 .arrow {
