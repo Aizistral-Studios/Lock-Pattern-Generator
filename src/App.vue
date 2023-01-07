@@ -134,7 +134,8 @@ h1 {
 	color: var(--color-header);
 	padding-inline: 20px;
 	border-bottom: 1px solid var(--color-text);
-	border-radius: 10px;
+	border-bottom-left-radius: 10px 10px;
+	border-bottom-right-radius: 10px 10px;
 }
 
 footer {
