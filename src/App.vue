@@ -66,7 +66,7 @@ function onChange(value: number, index: number) {
 			</div>
 			<footer>
 				<p>&copy; 2023 Aizistral</p>
-				<p><a href="">License</a> | <a href="">Issues</a> | <a href="">Source</a></p>
+				<p><a href="github.com/Aizistral-Studios/Lock-Pattern-Generator/tree/master/LICENSE">License</a> | <a href="github.com/Aizistral-Studios/Lock-Pattern-Generator/issues">Issues</a> | <a href="github.com/Aizistral-Studios/Lock-Pattern-Generator">Source</a></p>
 			</footer>
 		</div>
 	</main>
