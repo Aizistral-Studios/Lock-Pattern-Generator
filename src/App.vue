@@ -230,14 +230,16 @@ footer {
 .download-button {
 	margin-top: 10px;
 	margin-bottom: 0.25em;
-	color: var(--color-text);
+	color: var(--color-button);
 	background-color: var(--color-background);
-	border: 3px solid var(--color-secondary-button);
-	transition: border 0.3s;
+	border: 3px solid var(--color-button);
+	transition-property: border, color;
+	transition-duration: 0.2s;
 }
 
 .download-button:hover {
-	border: 3px solid var(--color-secondary-button-hover);
+	color: var(--color-button-hover);
+	border: 3px solid var(--color-button-hover);
 }
 
 @media (max-width: 600px) {
