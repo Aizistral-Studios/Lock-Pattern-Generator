@@ -23,6 +23,8 @@
 	--color-header: rgba(255, 255, 255, .87);
 	--color-button: hsl(153, 81%, 44%);
 	--color-button-hover: var(--color-link-hover);
+	--color-secondary-button: hsl(0, 0%, 40%);
+	--color-secondary-button-hover: hsl(0, 0%, 60%);
 	--color-button-text: #000;
 	--color-lockpad-background: #0A0A0A;
 	--color-point-empty: gray;

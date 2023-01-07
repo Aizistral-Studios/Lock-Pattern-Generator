@@ -3,14 +3,20 @@ import LockPad from "./components/LockPad.vue";
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
 import 'animate.css'
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import * as PatternGenerator from "./patternGenerator"
+import * as Html2Canvas from "html2canvas";
 
 const slider = ref<typeof VueSlider>();
 const state = reactive({
 	usePoints: getCachedUsePoints(),
-	sequence: PatternGenerator.generate(getCachedUsePoints())
+	sequence: PatternGenerator.generate(getCachedUsePoints()),
+	randomID: generateRandomID()
 });
+
+function generateRandomID() {
+	return Math.random().toString(36).substring(2, 15);
+}
 
 function getCachedUsePoints(): number {
 	const usePoints = localStorage.getItem("usePoints");
@@ -27,11 +33,27 @@ function cacheUsePoints(usePoints: number) {
 
 function updateSequence(usePoints: number) {
 	cacheUsePoints(usePoints);
+	state.randomID = generateRandomID();
 	state.sequence = PatternGenerator.generate(usePoints);
 }
 
 function onChange(value: number, index: number) {
 	updateSequence(value);
+}
+
+function onDownload() {
+	Html2Canvas.default(document.getElementById("capture") as HTMLElement, {
+		allowTaint: true,
+		useCORS: true,
+		logging: false,
+		backgroundColor: null,
+		scale: 2
+	}).then(canvas => {
+		const link = document.createElement("a");
+		link.download = "lock-pattern-" + state.randomID + ".png";
+		link.href = canvas.toDataURL("image/png");
+		link.click();
+	});
 }
 </script>
 
@@ -42,27 +64,32 @@ function onChange(value: number, index: number) {
 				<h1>Lock Pattern Generator</h1>
 			</header>
 			<div class="main-content animate__animated animate__backInLeft">
-				<LockPad class="lock-pad" :pattern="state.sequence" />
-				<div class="controls">
-					<div class="guide">
-						<p class="guide-header">Color Guide</p>
-						<p class="guide-subtext">Pattern points go in this sequence. Some lines may not be visible due to overlapping.</p>
-						<div class="guide-colors">
-							<div class="guide-color" v-for="i in 9" :key="i">
-								<div class="guide-color-dot" :style="{ backgroundColor: `var(--color-${i - 1})` }"></div>
-								<p class="guide-color-text">{{ i }}</p>
+				<div class="lock-pad-wrapper">
+					<LockPad id="capture" class="lock-pad" :pattern="state.sequence" />
+				</div>
+				<div class="controls-wrapper">
+					<div class="controls">
+						<div class="guide">
+							<p class="guide-header">Color Guide</p>
+							<p class="guide-subtext">Pattern points go in this sequence. Some lines may not be visible due to overlapping.</p>
+							<div class="guide-colors">
+								<div class="guide-color" v-for="i in 9" :key="i">
+									<div class="guide-color-dot" :style="{ backgroundColor: `var(--color-${i - 1})` }"></div>
+									<p class="guide-color-text">{{ i }}</p>
+								</div>
 							</div>
 						</div>
+						<div class="use-points">
+							<p class="use-points-desc">Use points:</p>
+							<p class="use-points-value">{{ state.usePoints }}</p>
+						</div>
+						<div class="slider-container">
+							<VueSlider v-model="state.usePoints" :min="1" :max="9" :interval="1" :tooltip="'none'"
+								:dotOptions="{ disabled: false, min: 4, max: 9 }" ref="slider" :onChange="onChange"></VueSlider>
+						</div>
+						<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
+						<button class="download-button" @click="onDownload">Save</button>
 					</div>
-					<div class="use-points">
-						<p class="use-points-desc">Use points:</p>
-						<p class="use-points-value">{{ state.usePoints }}</p>
-					</div>
-					<div class="slider-container">
-						<VueSlider v-model="state.usePoints" :min="1" :max="9" :interval="1" :tooltip="'none'"
-							:dotOptions="{ disabled: false, min: 4, max: 9 }" ref="slider" :onChange="onChange"></VueSlider>
-					</div>
-					<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
 				</div>
 			</div>
 			<footer class="animate__animated animate__backInUp">
@@ -120,6 +147,12 @@ footer {
 	row-gap: 20px;
 }
 
+.lock-pad-wrapper, .controls-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .lock-pad {
 	width: 300px;
 	height: 300px;
@@ -172,23 +205,35 @@ footer {
 	margin-bottom: 10px;
 }
 
-.generate-button {
+.generate-button, .download-button {
 	font-family: "Roboto", sans-serif;
 	font-weight: 400;
 	font-size: 1.2rem;
 	padding: 10px 20px;
 	border: none;
 	border-radius: 5px;
-	background-color: var(--color-button);
 	color: var(--color-button-text);
 	cursor: pointer;
 	transition: background-color 0.3s;
-	margin-top: 20px;
 	width: 100%;
+}
+
+.generate-button {
+	background-color: var(--color-button);
+	margin-top: 20px;
 }
 
 .generate-button:hover {
 	background-color: var(--color-button-hover);
+}
+
+.download-button {
+	margin-top: 10px;
+	background-color: var(--color-secondary-button);
+}
+
+.download-button:hover {
+	background-color: var(--color-secondary-button-hover);
 }
 
 @media (max-width: 600px) {
