@@ -6,6 +6,7 @@ import 'animate.css'
 import { reactive, ref, onMounted } from "vue";
 import * as PatternGenerator from "./patternGenerator"
 import * as Html2Canvas from "html2canvas";
+import Download from "./components/icons/Download.vue";
 
 const slider = ref<typeof VueSlider>();
 const state = reactive({
@@ -87,8 +88,12 @@ function onDownload() {
 							<VueSlider v-model="state.usePoints" :min="1" :max="9" :interval="1" :tooltip="'none'"
 								:dotOptions="{ disabled: false, min: 4, max: 9 }" ref="slider" :onChange="onChange"></VueSlider>
 						</div>
-						<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
-						<button class="download-button" @click="onDownload">Save</button>
+						<div class="end-buttons">
+							<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
+							<button class="download-button" @click="onDownload">
+								<Download class="download-icon" />
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -128,8 +133,8 @@ h1 {
 	text-align: center;
 	color: var(--color-header);
 	padding-inline: 20px;
-	border-radius: 10px;
 	border-bottom: 1px solid var(--color-text);
+	border-radius: 10px;
 }
 
 footer {
@@ -205,6 +210,16 @@ footer {
 	margin-bottom: 10px;
 }
 
+.end-buttons {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	margin-top: 20px;
+	margin-bottom: 0.4rem;
+	gap: 10px;
+}
+
 .generate-button, .download-button {
 	font-family: "Roboto", sans-serif;
 	font-weight: 400;
@@ -215,12 +230,12 @@ footer {
 	cursor: pointer;
 	transition: background-color 0.3s;
 	width: 100%;
+	height: 3rem;
 }
 
 .generate-button {
 	color: var(--color-button-text);
 	background-color: var(--color-button);
-	margin-top: 20px;
 }
 
 .generate-button:hover {
@@ -228,13 +243,20 @@ footer {
 }
 
 .download-button {
-	margin-top: 10px;
-	margin-bottom: 0.25em;
 	color: var(--color-button);
 	background-color: var(--color-background);
 	border: 3px solid var(--color-button);
 	transition-property: border, color;
 	transition-duration: 0.2s;
+	padding: 0;
+	width: 3rem;
+	min-width: 3rem;
+}
+
+.download-icon {
+	width: 30px;
+	height: 30px;
+	margin-bottom: -5px;
 }
 
 .download-button:hover {
