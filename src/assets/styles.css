@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	position: relative;
+	font-weight: normal;
+}
+
+:root {
+	/* General colors */
+	--color-text: rgba(235, 235, 235, 0.64);
+	--color-text-darker: gray;
+	--color-background: #181818;
+	--color-link: hsla(160, 100%, 37%, 1);
+	--color-link-hover: #36ff9b;
+	--color-slider-background: black;
+	--color-slider-fill: hsl(150, 47%, 40%);
+	--color-slider-focus-border: hsl(150, 100%, 61%);
+	--color-slider-focus-shadow: hsla(150, 100%, 61%, 0.2);
+	--color-header: rgba(255, 255, 255, .87);
+	--color-button: hsl(153, 81%, 44%);
+	--color-button-hover: var(--color-link-hover);
+	--color-button-text: #000;
+	--color-lockpad-background: #0A0A0A;
+	--color-point-empty: gray;
+
+	/* Lock pattern colors */
+	--color-0: hsl(120, 75%, 35%);
+	--color-1: hsl(60, 75%, 39%);
+	--color-2: hsl(25, 84%, 43%);
+	--color-3: hsl(0, 75%, 35%);
+	--color-4: hsl(329, 69%, 47%);
+	--color-5: hsl(269, 72%, 38%);
+	--color-6: hsl(240, 73%, 41%);
+	--color-7: hsl(180, 77%, 39%);
+	--color-8: hsl(0, 0%, 100%);
+}
+
+body {
+	min-height: 100vh;
+	color: var(--color-text);
+	background: var(--color-background);
+	line-height: 1.6;
+	font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-size: 15px;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	/* transition: color 0.5s, background-color 0.5s; */
+}
+
+#app {
+	min-height: inherit;
+	width: 100%;
+	font-weight: normal;
+	margin: 0 auto;
+}
+
+a, .green {
+	text-decoration: none;
+	color: var(--color-link);
+	transition: 0.3s;
+}
+
+a:hover, .green:hover {
+	color: var(--color-link-hover);
+}
+
+.vue-slider-rail {
+	background-color: var(--color-slider-background);
+	border-radius: 15px;
+	height: 10px;
+	width: 100%;
+	transition: background-color 0.3s;
+}
+
+.vue-slider-process {
+	background-color: var(--color-slider-fill);
+	border-radius: 15px;
+	transition: background-color 0.3s;
+}
+
+.vue-slider-dot {
+	height: 20px !important;
+	width: 20px !important;
+}
+
+.vue-slider-dot-handle-focus {
+	border-color: var(--color-slider-focus-border);
+	box-shadow: 0 0 0 3px var(--color-slider-focus-shadow);
+}
+
+.vue-slider:hover .vue-slider-dot-handle-focus {
+	border-color: var(--color-slider-focus-border);
+}
