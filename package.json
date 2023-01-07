@@ -11,7 +11,9 @@
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
 	},
 	"dependencies": {
+		"@types/html2canvas": "^1.0.0",
 		"animate.css": "^4.1.1",
+		"html2canvas": "^1.4.1",
 		"vue": "^3.2.45",
 		"vue-slider-component": "^4.1.0-beta.7"
 	},
