@@ -3,7 +3,7 @@ export interface Point {
 	invalidConnections: { number: number, blocker: number }[];
 }
 
-const POINTS: Point[] = [
+const allPoints: Point[] = [
 	{ number: 1, invalidConnections: [{ number: 3, blocker: 2 }, { number: 7, blocker: 4 }, { number: 9, blocker: 5 }] },
 	{ number: 2, invalidConnections: [{ number: 8, blocker: 5 }] },
 	{ number: 3, invalidConnections: [{ number: 1, blocker: 2 }, { number: 7, blocker: 5 }, { number: 9, blocker: 6 }] },
@@ -29,7 +29,7 @@ export function generate(usePoints: number): number[] {
 
 function generatePatternInternal(usePoints: number): Point[] {
 	const pattern = [];
-	const availablePoints = [...POINTS];
+	const availablePoints = [...allPoints];
 	let currentPoint = availablePoints[Math.floor(Math.random() * availablePoints.length)];
 	pattern.push(currentPoint);
 
@@ -45,7 +45,7 @@ function generatePatternInternal(usePoints: number): Point[] {
 function getValidConnections(currentPoint: Point, pattern: Point[]): Point[] {
 	const validConnections: Point[] = [];
 
-	for (const point of POINTS) {
+	for (const point of allPoints) {
 		if (point.number === currentPoint.number || pattern.indexOf(point) !== -1)
 			continue;
 

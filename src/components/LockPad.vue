@@ -1,20 +1,9 @@
 <script lang="ts" setup>
 import { defineProps, onUpdated, ref, onMounted } from "vue";
 
-export interface Pattern {
-	sequence: number[];
-}
+interface Point { id: number; x: number; y: number; }
 
-interface Point {
-	id: number;
-	x: number;
-	y: number;
-}
-
-const props = defineProps<{
-	pattern: Pattern;
-}>();
-
+const props = defineProps<{ pattern: number[]; }>();
 const lockpad = ref<HTMLElement>();
 const pointRefs = ref<HTMLElement[]>([]);
 const points: Point[] = [
@@ -41,57 +30,54 @@ function normalizeProperty(element: HTMLElement, property: string): void {
 	}
 }
 
-function getIndexInSequence(index: number): number {
-	return props.pattern.sequence.indexOf(index + 1);
-}
-
-function handleUpdate() {
+function handleUpdate(): void {
 	const refs = pointRefs.value.filter(Boolean);
 	const width = (refs[0].parentElement as HTMLElement).offsetWidth;
 
 	refs.forEach((ref, index) => {
-		if (props.pattern.sequence.includes(index + 1)) {
-			ref.style.backgroundColor = `var(--color-${props.pattern.sequence.indexOf(index + 1)})`;
-		} else {
-			ref.style.backgroundColor = "";
-		}
+		if (props.pattern.includes(index + 1)) {
+			const indexInPattern = props.pattern.indexOf(index + 1);
 
-		if (props.pattern.sequence.includes(index + 1)) {
-			const indexInSequence = getIndexInSequence(index);
-
-			if (indexInSequence >= props.pattern.sequence.length - 1)
+			if (indexInPattern >= props.pattern.length - 1)
 				return;
-
-			const point = points[index];
-			const nextPoint = points[props.pattern.sequence[indexInSequence + 1] - 1];
-
-			const angle = Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180 / Math.PI;
-			const dist = distance(point, nextPoint);
 
 			const arrow = ref.querySelector(".arrow") as HTMLElement;
 
+			normalizeProperty(arrow, "height");
 			normalizeProperty(arrow, "transform-origin");
 			normalizeProperty(arrow, "border-radius");
 
+			const point = points[index];
+			const nextPoint = points[props.pattern[indexInPattern + 1] - 1];
+			const angle = Math.atan2(nextPoint.y - point.y, nextPoint.x - point.x) * 180 / Math.PI;
+			const dist = distance(point, nextPoint);
+
 			arrow.style.transform = `rotate(${angle}deg)`;
 			arrow.style.width = `calc(${dist * width}px + 25%)`;
-			arrow.style.background = `linear-gradient(90deg, var(--color-${indexInSequence}), var(--color-${indexInSequence + 1}))`;
-			arrow.style.zIndex = (indexInSequence + 1).toString();
 		}
 	});
 };
 
+function computePointBackground(point: Point): string {
+	const index = props.pattern.indexOf(point.id);
+	return index === -1 ? "var(--color-point-empty)" : `var(--color-${index})`;
+}
+
 onMounted(handleUpdate);
 onUpdated(handleUpdate);
-
 </script>
 
 <template>
 	<div class="wrapper" ref="lockpad">
 		<div class="point-container" v-for="point in points" :key="point.id">
-			<div class="point" ref="pointRefs" :id="`point-${point.id.toString()}`">
-				<div class="arrow" v-if="pattern.sequence.includes(point.id) &&
-				pattern.sequence.indexOf(point.id) < pattern.sequence.length - 1"></div>
+			<div class="point" ref="pointRefs" :id="`point-${point.id.toString()}`"
+				:style="{ '--point-background': computePointBackground(point) }">
+				<div class=" arrow" v-if="pattern.includes(point.id) && pattern.indexOf(point.id) < pattern.length - 1"
+					:style="{
+						'--arrow-color-0': `var(--color-${pattern.indexOf(point.id)})`,
+						'--arrow-color-1': `var(--color-${pattern.indexOf(point.id) + 1})`,
+						'--z-index': `${pattern.indexOf(point.id) + 1}`
+					}" />
 			</div>
 		</div>
 	</div>
@@ -121,9 +107,11 @@ onUpdated(handleUpdate);
 	width: 30%;
 	height: 30%;
 	border-radius: 50%;
-	background-color: var(--color-point-empty);
 	overflow: visible;
 	position: relative;
+
+	--point-background: var(--color-point-empty);
+	background-color: var(--point-background);
 }
 
 .arrow {
@@ -131,11 +119,15 @@ onUpdated(handleUpdate);
 	top: calc(50% - 12.5%);
 	left: calc(50% - 12.5%);
 	width: 0;
-	height: 25%;
+	height: 8px;
 	transform-origin: 4px 4px;
 	border-radius: 5px;
-	background: linear-gradient(90deg, var(--color-0) 0%, var(--color-1) 100%);
-	z-index: 1;
 	opacity: 0.75;
+
+	--z-index: 1;
+	--arrow-color-0: white;
+	--arrow-color-1: white;
+	z-index: var(--z-index);
+	background: linear-gradient(90deg, var(--arrow-color-0) 0%, var(--arrow-color-1) 100%);
 }
 </style>

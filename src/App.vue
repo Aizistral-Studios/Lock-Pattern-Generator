@@ -5,58 +5,70 @@ import 'vue-slider-component/theme/default.css'
 import { reactive, ref } from "vue";
 import * as PatternGenerator from "./patternGenerator"
 
+const slider = ref<typeof VueSlider>();
 const state = reactive({
-	usePoints: 5,
-	sequence: PatternGenerator.generate(5)
+	usePoints: getCachedUsePoints(),
+	sequence: PatternGenerator.generate(getCachedUsePoints())
 });
 
-const slider = ref<typeof VueSlider>();
+function getCachedUsePoints(): number {
+	const usePoints = localStorage.getItem("usePoints");
 
-function updateSequence() {
-	state.sequence = PatternGenerator.generate(state.usePoints);
-	console.log(state.sequence);
+	if (usePoints)
+		return parseInt(usePoints);
+
+	return 5;
+}
+
+function cacheUsePoints(usePoints: number) {
+	localStorage.setItem("usePoints", usePoints.toString());
+}
+
+function updateSequence(usePoints: number) {
+	cacheUsePoints(usePoints);
+	state.sequence = PatternGenerator.generate(usePoints);
 }
 
 function onChange(value: number, index: number) {
-	console.log("dragging");
-	console.log((slider.value as typeof VueSlider).getIndex());
+	updateSequence(value);
 }
-
 </script>
 
 <template>
 	<main>
-		<header>
-			<h1>Lock Pattern Generator</h1>
-		</header>
-		<div class="content">
-			<LockPad class="lock-pad" :pattern="{ sequence: state.sequence }" />
-			<div class="controls">
-				<div class="guide">
-					<p class="guide-header">Color Guide</p>
-					<p class="guide-subtext">Pattern points go in this sequence. Some lines may not be visible due to overlapping.</p>
-					<div class="guide-colors">
-						<div class="guide-color" v-for="i in 9" :key="i">
-							<div class="guide-color-dot" :style="{ backgroundColor: `var(--color-${i - 1})` }"></div>
-							<p class="guide-color-text">{{ i }}</p>
+		<div class="content-wrapper">
+			<header>
+				<h1>Lock Pattern Generator</h1>
+			</header>
+			<div class="main-content">
+				<LockPad class="lock-pad" :pattern="state.sequence" />
+				<div class="controls">
+					<div class="guide">
+						<p class="guide-header">Color Guide</p>
+						<p class="guide-subtext">Pattern points go in this sequence. Some lines may not be visible due to overlapping.</p>
+						<div class="guide-colors">
+							<div class="guide-color" v-for="i in 9" :key="i">
+								<div class="guide-color-dot" :style="{ backgroundColor: `var(--color-${i - 1})` }"></div>
+								<p class="guide-color-text">{{ i }}</p>
+							</div>
 						</div>
 					</div>
+					<div class="use-points">
+						<p class="use-points-desc">Use points:</p>
+						<p class="use-points-value">{{ state.usePoints }}</p>
+					</div>
+					<div class="slider-container">
+						<VueSlider v-model="state.usePoints" :min="1" :max="9" :interval="1" :tooltip="'none'"
+							:dotOptions="{ disabled: false, min: 4, max: 9 }" ref="slider" :onChange="onChange"></VueSlider>
+					</div>
+					<button class="generate-button" @click="updateSequence(state.usePoints)">Generate</button>
 				</div>
-				<div class="use-points">
-					<p class="use-points-desc">Use points:</p>
-					<p class="use-points-value">{{ state.usePoints }}</p>
-				</div>
-				<div class="slider-container">
-					<VueSlider v-model="state.usePoints" :min="1" :max="9" :interval="1" :tooltip="'none'"
-						:dotOptions="{ disabled: false, min: 4, max: 9 }" ref="slider"></VueSlider>
-				</div>
-				<button class="generate-button" @click="updateSequence">Generate</button>
 			</div>
+			<footer>
+				<p>&copy; 2023 Aizistral</p>
+				<p><a href="">License</a> | <a href="">Issues</a> | <a href="">Source</a></p>
+			</footer>
 		</div>
-		<footer>
-			<p>&copy; 2023 Aizistral</p>
-			<p><a href="">License</a> | <a href="">Issues</a> | <a href="">Source</a></p>
-		</footer>
 	</main>
 </template>
 
@@ -67,8 +79,11 @@ main {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding-top: 50px;
-	padding-bottom: 100px;
+	padding: 25px;
+}
+
+.content-wrapper {
+	margin-bottom: 25px;
 }
 
 header {
@@ -95,11 +110,18 @@ footer {
 	padding-top: 50px;
 }
 
-.content {
+.main-content {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: center;
-	gap: 50px;
+	column-gap: 50px;
+	row-gap: 20px;
+}
+
+.lock-pad {
+	width: 300px;
+	height: 300px;
 }
 
 .controls {
