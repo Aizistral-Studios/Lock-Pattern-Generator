@@ -229,6 +229,7 @@ footer {
 
 .download-button {
 	margin-top: 10px;
+	margin-bottom: 0.25em;
 	background-color: var(--color-secondary-button);
 }
 
